@@ -3,7 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/luisg/Documents/NetBeansProjects/FileServer/FileServer-Client/src/fileServerClient/Client.java</file>
+            <file>file:/C:/Users/luisg/Documents/NetBeansProjects/FileServer/FileServer-Server/src/fileServerServer/Server.java</file>
+            <file>file:/C:/Users/luisg/Documents/NetBeansProjects/FileServer/FileServer-Server/src/fileServerServer/serverProtocol.java</file>
         </group>
     </open-files>
 </project-private>
