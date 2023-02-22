@@ -11,6 +11,10 @@ import java.util.logging.Logger;
 
 public class Client {
     
+    Socket socket = null;
+    PrintWriter out = null;
+    BufferedReader in = null;
+    
     public static void main(String[] args){
         
         Client client = new Client();
@@ -20,9 +24,7 @@ public class Client {
     
     public void connectServer(){
         
-        Socket socket = null;
-        PrintWriter out = null;
-        BufferedReader in = null;
+
         
         Scanner scanner = new Scanner(System.in);
         
@@ -51,6 +53,8 @@ public class Client {
 //                System.out.println("Server: " + fromServer);
 //            }
 //            
+
+            System.out.println("Socket Closed.");
             out.close();
             in.close();
             stdIn.close();

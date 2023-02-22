@@ -30,11 +30,18 @@ public class serverProtocol implements Runnable {
         
         try {
             
-            String inputLine, outputLine;
+            String inputLine = "", outputLine = "";
 
-            out.println(in.readLine());
             
+            while((inputLine = in.readLine()) != null ){
+                
+                if(!inputLine.isEmpty())
+                    System.out.println("Client-" + socket.getPort() + ": " + inputLine);
+                    
+            }
             
+            System.out.println("Client on port: " + socket.getPort() + " closed.");
+
             out.close();
             in.close();
             socket.close();   

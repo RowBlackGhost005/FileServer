@@ -1,6 +1,9 @@
 package fileServerServer;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Executor;
@@ -19,9 +22,9 @@ public class Server {
     
     public void executeServer(){
                 try {
-            ServerSocket serverSocket = null;
-            serverSocket = new ServerSocket(PORT);
-	    System.out.println("Server ready!");
+            DatagramSocket serverSocket = new DatagramSocket(PORT , InetAddress.getByName("localhost"));
+	    DatagramPacket packet = new DatagramPacket(new byte[255] , 255);
+            System.out.println("Server ready!");
             Socket clientSocket = null;
 
             //Servicio de pool de hilos
@@ -29,11 +32,14 @@ public class Server {
             
             //Acepta todas las conexiones asignando la conexión a un protocolo kockknock nuevo
             while (true){
-                clientSocket = serverSocket.accept();
+                serverSocket.receive(packet);
                 
-                service.execute(new serverProtocol(clientSocket));
+//                service.execute(new serverProtocol(clientSocket));
                 
-                System.out.println("Attending a new client on port: " + clientSocket.getPort() + " . . .");
+                System.out.println("Attending a new client on port: " + packet.getPort() + " . . .");
+                
+                //serverSocket.send(packet);
+                packet.setLength(255);
             }
 
         } catch (IOException e) {
