@@ -1,19 +1,19 @@
 package fileServerClient;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Client {
     
-    Socket socket = null;
-    PrintWriter out = null;
-    BufferedReader in = null;
+    private int port;
+    private DatagramSocket clientSocket;
+    private DatagramPacket clientPacket;
+    private byte[] buffer;
+    private String serverAddress = "localhost";
+    private int serverPort = 4444;
     
     public static void main(String[] args){
         
@@ -23,44 +23,44 @@ public class Client {
     }
     
     public void connectServer(){
-        
 
-        
-        Scanner scanner = new Scanner(System.in);
-        
+        Scanner userInput = new Scanner(System.in);
+
         try {
-            socket = new Socket("localhost", 4444);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-            String fromServer;
-            String fromUser;
-            
-            out.println("Ping!");
-            
-            String userInput = "";
-            
-            while(!userInput.equalsIgnoreCase("close")){
-                
-                userInput = scanner.nextLine();
-                
-                out.println(userInput);
-            }
-            
-            //Communication with server
-//            while ((fromServer = in.readLine()) != null) {
-//                
-//                System.out.println("Server: " + fromServer);
-//            }
-//            
+            clientSocket = new DatagramSocket(5555 , InetAddress.getByName("localhost"));
+            buffer = new byte[255];
 
-            System.out.println("Socket Closed.");
-            out.close();
-            in.close();
-            stdIn.close();
-            socket.close();            
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+
+            System.out.println("Client Ready!");
+
+            buffer = userInput.nextLine().getBytes();//"Ping!".getBytes();
+
+            clientPacket = new DatagramPacket(buffer , buffer.length , InetAddress.getByName(serverAddress) , serverPort);
+
+            clientSocket.send(clientPacket);
+
+            //Packet de respuesta
+            DatagramPacket inPacket = new DatagramPacket(new byte[255] , 255);
+            while (true){
+
+                //Comienza a escuchar para recibir lo solicitado
+                clientSocket.receive(inPacket);
+
+                try(FileOutputStream fileReceived = new FileOutputStream("C:\\Users\\lamar\\OneDrive\\Documentos\\NetBeansProjects\\FileServer\\FileServer-Client\\received.txt")){
+                    fileReceived.write(inPacket.getData());
+                }
+
+                System.out.println(new String(inPacket.getData()));
+            }
+
+
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
+
 }
