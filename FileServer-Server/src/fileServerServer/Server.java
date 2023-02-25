@@ -49,7 +49,7 @@ public class Server {
                 if(received != null)
                     System.out.println(received.trim());
 
-                    sendResponse(serverPacket);
+                sendResponse(serverPacket);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
