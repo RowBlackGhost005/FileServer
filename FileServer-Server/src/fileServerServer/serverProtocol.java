@@ -56,6 +56,7 @@ public class serverProtocol implements Runnable {
 
             //Write the damn file
 
+            /*
             File fileToWrite = new File("C:\\Users\\lamar\\Downloads\\UDPSockets.png");
             FileOutputStream fileWritter = new FileOutputStream(fileToWrite);
 
@@ -71,6 +72,8 @@ public class serverProtocol implements Runnable {
 
                 filePacketWritting++;
             }
+
+             */
 
 
         } catch (IOException e) {

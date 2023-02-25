@@ -2,6 +2,8 @@ package fileServerServer;
 
 import java.io.*;
 import java.net.*;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -58,26 +60,64 @@ public class Server {
 
     public void sendResponse(DatagramPacket data){
         int clientPort = data.getPort();
-        String clientAddress = data.getAddress().toString();
+        String clientAddress = data.getAddress().getHostAddress();
         String dataReceived = new String(data.getData()).trim();
 
         File requestedFile = new File(dataReceived);
 
-        buffer = new byte[255];
+        byte[] packetHead = new byte[8];
+        byte[] filePacket = new byte[247];
 
-        try {
-            FileInputStream fileStream = new FileInputStream(requestedFile);
+        ArrayList<byte[]> fileInPackets = new ArrayList<byte[]>();
 
-            fileStream.read(buffer);
+        int filePackets = 0;
 
-            fileStream.close();
+        try{
+            FileInputStream fileIn = new FileInputStream(requestedFile);
 
-            serverPacket.setData(buffer);
+            filePackets = Math.ceilDiv(fileIn.readAllBytes().length , 247);
 
-            serverSocket.send(serverPacket);
+            fileIn.getChannel().position(0);
 
+            int packetCount = 0;
+
+            while(packetCount < filePackets){
+
+                packetHead = ByteBuffer.allocate(8).putInt(packetCount).array();
+
+                fileIn.read(filePacket);
+
+                byte[] packetToSend = new byte[255];
+                System.arraycopy(packetHead , 0 , packetToSend , 0 , 8);
+                System.arraycopy(filePacket , 0 , packetToSend , 8 , 247);
+
+                ByteBuffer buffer = ByteBuffer.allocate(8);
+                buffer.put(packetHead);
+                buffer.rewind();
+
+                System.out.println(buffer.getInt());
+
+                serverSocket.send(new DatagramPacket(packetToSend , 255 , InetAddress.getByName(clientAddress), clientPort));
+
+                filePacket = new byte[247];
+                packetCount++;
+            }
+
+        }catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        System.arraycopy("end".getBytes() , 0 , buffer , 0 , 3);
+
+        try {
+            serverSocket.send(new DatagramPacket(buffer , 255 , InetAddress.getByName(clientAddress), clientPort));
+            System.out.println("File transfer finished");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 }

@@ -2,6 +2,9 @@ package fileServerClient;
 
 import java.io.*;
 import java.net.*;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,18 +44,51 @@ public class Client {
 
             //Packet de respuesta
             DatagramPacket inPacket = new DatagramPacket(new byte[255] , 255);
+
+            FileOutputStream fileReceived = new FileOutputStream("C:\\Users\\lamar\\OneDrive\\Documentos\\NetBeansProjects\\FileServer\\FileServer-Client\\received.mp4");
+
+            ArrayList<byte[]> fileInPackets = new ArrayList<byte[]>();
+
             while (true){
 
                 //Comienza a escuchar para recibir lo solicitado
                 clientSocket.receive(inPacket);
 
-                try(FileOutputStream fileReceived = new FileOutputStream("C:\\Users\\lamar\\OneDrive\\Documentos\\NetBeansProjects\\FileServer\\FileServer-Client\\received.txt")){
-                    fileReceived.write(inPacket.getData());
-                }
+                byte[] receivedPacket = inPacket.getData();
+                byte[] writePacket = new byte[247];
 
-                System.out.println(new String(inPacket.getData()));
+
+
+                fileInPackets.add(receivedPacket);
+
+                //System.out.println(new String(inPacket.getData()));
+                byte[] packetHead = new byte[8];
+                System.arraycopy(inPacket.getData() , 0 , packetHead , 0 , 8);
+                System.arraycopy(receivedPacket , 8 , writePacket , 0 , 247);
+
+                fileReceived.write(writePacket);
+
+                ByteBuffer buffer = ByteBuffer.allocate(8);
+                buffer.put(packetHead);
+                buffer.rewind();
+
+
+                System.out.println("Head: " + (fileInPackets.size()-1) + " | " + buffer.getInt() + " Index");
+
+
+                inPacket.setData(new byte[255]);
+
+                String isEnd = new String(inPacket.getData()).trim();
+
+                System.out.println(isEnd);
+
+                if(isEnd.equalsIgnoreCase("end")){
+                    break;
+                }
             }
 
+            fileReceived.flush();
+            fileReceived.close();
 
         } catch (SocketException e) {
             throw new RuntimeException(e);
