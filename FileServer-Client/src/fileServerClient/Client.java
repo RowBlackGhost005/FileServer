@@ -63,13 +63,9 @@ public class Client {
         int packetsReceived = 0;
 
         try {
-            //Set up the socket
-            clientSocket = new DatagramSocket(clientPORT , InetAddress.getByName("localhost"));
-            buffer = new byte[255];
+
 
             //// REQUEST FOR USER INPUT ////
-            System.out.println("Client Ready!");
-
             System.out.println("Ingrese el PATH del recurso a solicitar: ");
             buffer = userInput.nextLine().getBytes();//"Ping!".getBytes();
 
@@ -79,11 +75,20 @@ public class Client {
             System.out.println("Ingrese el PATH donde se guardará el archivo: ");
             filePath = userInput.nextLine();
 
+            System.out.println("Ingrese el PUERTO donde escuchará: ");
+            clientPORT = userInput.nextInt();
+            userInput.nextLine();
+
             //// REQUEST FOR USER INPUT - end ////
+
+            //Set up the socket
+            clientSocket = new DatagramSocket(clientPORT , InetAddress.getByName("localhost"));
+
+            System.out.println("Client Ready!");
 
             //Creates the packet and sends the request of the file
             clientPacket = new DatagramPacket(buffer , buffer.length , InetAddress.getByName(serverAddress) , serverPort);
-
+            buffer = new byte[255];
             clientSocket.send(clientPacket);
 
             //Packet used for the server responses

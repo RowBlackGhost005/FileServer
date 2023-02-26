@@ -58,6 +58,7 @@ public class Server {
         while(true) {
 
             try {
+                System.out.println("File Server Ready!");
                 serverSocket.receive(serverPacket);
 
                 //Transform bytes[] into String.
