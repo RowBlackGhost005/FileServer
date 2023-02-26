@@ -89,7 +89,7 @@ public class Server {
 
             int packetCount = 0;
 
-            while(packetCount < filePackets){
+            while(packetCount <= filePackets){
 
                 packetHead = ByteBuffer.allocate(8).putInt(packetCount).array();
 

@@ -47,6 +47,15 @@ public class ServerProtocol implements Runnable {
 
             int packetCount = 0;
 
+            String fileExtension = requestedFile.getAbsolutePath().substring(requestedFile.getAbsolutePath().lastIndexOf(".") , requestedFile.getAbsolutePath().length());
+
+            //Sends the header of the file
+            byte[] transferHeader = new byte[255];
+            //Sends a header with "amountPackets|fileExtension" to the client
+            byte[] fileInfo = (filePackets + "|" + fileExtension).getBytes();
+            System.arraycopy( fileInfo , 0 , transferHeader , 0 , fileInfo.length);
+            connectionSocket.send(new DatagramPacket(transferHeader , 255 , InetAddress.getByName(clientHost), clientPort));
+
             while(packetCount < filePackets){
 
                 packetHead = ByteBuffer.allocate(8).putInt(packetCount).array();
