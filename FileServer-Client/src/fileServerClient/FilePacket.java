@@ -2,12 +2,25 @@ package fileServerClient;
 
 import java.util.Objects;
 
-public class FilePacket implements Comparable{
+/**
+ * Class that represents a File Packet sent by the server.
+ * This class is used to envelop both parts of the packet.
+ *
+ * @author Luis Angel Marin
+ */
+public class FilePacket{
 
+    //Index of the packet.
     private int filePacketNumber;
 
+    //Data of the packet.
     private byte[] filePacketInfo;
 
+    /**
+     * Creates a new FilePacket using a packetNumber and packetInfo given.
+     * @param packetNumber Packet number of this packet.
+     * @param packetInfo Byte array that represents the Data of a file.
+     */
     public FilePacket(int packetNumber , byte[] packetInfo){
         this.filePacketNumber = packetNumber;
         this.filePacketInfo = packetInfo;
@@ -40,19 +53,5 @@ public class FilePacket implements Comparable{
     @Override
     public int hashCode() {
         return Objects.hash(filePacketNumber);
-    }
-
-
-    @Override
-    public int compareTo(Object o) {
-        FilePacket packetToCompare = (FilePacket) o;
-
-        if(packetToCompare.getFilePacketNumber() > getFilePacketNumber()){
-            return -1;
-        }else if(packetToCompare.getFilePacketNumber() < getFilePacketNumber()){
-            return 1;
-        }else{
-            return 0;
-        }
     }
 }
