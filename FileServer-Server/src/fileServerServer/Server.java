@@ -5,6 +5,7 @@ import java.net.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
@@ -15,7 +16,7 @@ public class Server {
     private DatagramSocket serverSocket;
     private DatagramPacket serverPacket;
     private byte[] buffer;
-
+    private ExecutorService executorService;
     
     public static void main(String[] args){
         
@@ -31,6 +32,7 @@ public class Server {
             serverSocket = new DatagramSocket(PORT, InetAddress.getByName(host));
             buffer = new byte[255]; // Buffer de lectura de bytes.
             serverPacket = new DatagramPacket(buffer , buffer.length);
+            executorService = Executors.newFixedThreadPool(5);
         } catch (SocketException e) {
             throw new RuntimeException(e);
         } catch (UnknownHostException e) {
@@ -49,9 +51,15 @@ public class Server {
 
                 //Imprime lo que reciba en el serverPacket
                 if(received != null)
-                    System.out.println(received.trim());
+                    System.out.println("Attending client on from: " + serverPacket.getAddress().getHostAddress() + "\n" + "Requested: " +received.trim() + "\n");
 
-                sendResponse(serverPacket);
+                //Manejo del envío del archivo pedido con un hilo
+                executorService.execute(new ServerProtocol(serverPacket));
+
+                buffer = new byte[255];
+
+                //OLD SINGLE-THREAD SOLUTION
+                //sendResponse(serverPacket);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

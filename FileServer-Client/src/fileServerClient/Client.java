@@ -45,7 +45,7 @@ public class Client {
             //Packet de respuesta
             DatagramPacket inPacket = new DatagramPacket(new byte[255] , 255);
 
-            FileOutputStream fileReceived = new FileOutputStream("C:\\Users\\lamar\\OneDrive\\Documentos\\NetBeansProjects\\FileServer\\FileServer-Client\\received.mp4");
+            FileOutputStream fileReceived = new FileOutputStream("C:\\Users\\lamar\\OneDrive\\Documentos\\NetBeansProjects\\FileServer\\FileServer-Client\\received.jpg");
 
             ArrayList<byte[]> fileInPackets = new ArrayList<byte[]>();
 
@@ -66,7 +66,7 @@ public class Client {
                 System.arraycopy(inPacket.getData() , 0 , packetHead , 0 , 8);
                 System.arraycopy(receivedPacket , 8 , writePacket , 0 , 247);
 
-                fileReceived.write(writePacket);
+                //fileReceived.write(writePacket);
 
                 ByteBuffer buffer = ByteBuffer.allocate(8);
                 buffer.put(packetHead);
@@ -76,7 +76,7 @@ public class Client {
                 System.out.println("Head: " + (fileInPackets.size()-1) + " | " + buffer.getInt() + " Index");
 
 
-                inPacket.setData(new byte[255]);
+
 
                 String isEnd = new String(inPacket.getData()).trim();
 
@@ -85,10 +85,13 @@ public class Client {
                 if(isEnd.equalsIgnoreCase("end")){
                     break;
                 }
+
+                inPacket.setData(new byte[255]);
             }
 
             fileReceived.flush();
             fileReceived.close();
+            clientSocket.close();
 
         } catch (SocketException e) {
             throw new RuntimeException(e);
