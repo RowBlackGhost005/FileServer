@@ -1,2 +1,6 @@
 /FileServer-Client/build/
 /FileServer-Server/build/
+/target/
+/FileServer/target/
+/FileServer-Host/target/
+/FileServer-Client/target/
